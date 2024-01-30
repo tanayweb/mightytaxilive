@@ -448,12 +448,13 @@ class UserController extends Controller
             $user->player_id = $request->player_id;
         }
         $user->save();
-
+        /*
         if( $user->user_type == 'driver') {
             $user_resource = new DriverResource($user);
         } else {
             $user_resource = new UserResource($user);
-        }
+        }*/
+        $user_resource = null;
         $message = __('message.update_form',['form' => __('message.status') ]);
         $response = [
             'data' => $user_resource,

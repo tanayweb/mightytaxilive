@@ -1,3 +1,5 @@
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `parent_id`, `created_at`, `updated_at`) VALUES (NULL, 'dispatch add', 'web', '27', '2023-09-14 02:05:42', NULL);
+
 /* 11-02-2023 */
 /*silent*/
 /* 13-01-2023 */

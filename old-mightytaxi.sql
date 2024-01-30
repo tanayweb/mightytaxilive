@@ -271,7 +271,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (29, '2022_08_08_090613_create_user_bank_accounts_table', 1),
 (30, '2022_12_10_091040_alter_services_table', 2),
 (31, '2022_12_12_082101_alter_users_table', 2),
-(32, '2022_12_20_100326_create_complaint_comments_table', 3);
+(32, '2022_12_20_100326_create_complaint_comments_table', 3),
+(33, '2023_01_13_071123_add_last_location_update_at_in_users_table', 4),
+(34, '2023_01_13_071835_alter_ride_requests_table', 4);
 
 -- --------------------------------------------------------
 
@@ -463,7 +465,9 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `parent_id`, `created_at`
 (64, 'privacy policy', 'web', 62, '2022-11-02 06:05:42', NULL),
 (65, 'driver show', 'web', 17, '2022-12-23 06:05:42', NULL),
 (66, 'rider show', 'web', 22, '2022-12-23 06:05:42', NULL),
-(67, 'complaint show', 'web', 57, '2022-12-23 06:05:42', NULL);
+(67, 'complaint show', 'web', 57, '2022-12-23 06:05:42', NULL),
+(68, 'driverearning list', 'web', 17, '2023-01-17 06:05:42', NULL),
+(69, 'driver location', 'web', 17, '2023-01-17 06:05:42', NULL);
 
 
 -- --------------------------------------------------------
@@ -531,7 +535,7 @@ CREATE TABLE `ride_requests` (
   `rider_id` bigint UNSIGNED DEFAULT NULL,
   `service_id` bigint UNSIGNED DEFAULT NULL,
   `datetime` datetime DEFAULT NULL,
-  `is_schedule` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0-regular, 1-schedule',
+  `is_schedule` tinyint(1) NULL DEFAULT '0' COMMENT '0-regular, 1-schedule',
   `ride_attempt` int DEFAULT '0',
   `distance_unit` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `total_amount` double DEFAULT '0',
@@ -571,11 +575,13 @@ CREATE TABLE `ride_requests` (
   `per_minute_waiting` double DEFAULT NULL,
   `per_minute_waiting_charge` double DEFAULT NULL,
   `payment_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `is_driver_rated` tinyint(1) NOT NULL DEFAULT '0',
-  `is_rider_rated` tinyint(1) NOT NULL DEFAULT '0',
+  `is_driver_rated` tinyint(1) NULL DEFAULT '0',
+  `is_rider_rated` tinyint(1) NULL DEFAULT '0',
   `cancelled_driver_ids` text COLLATE utf8mb4_unicode_ci,
   `service_data` json DEFAULT NULL,
   `max_time_for_find_driver_for_ride_request` double DEFAULT NULL,
+  `is_ride_for_other` tinyint(1) NULL DEFAULT '0' COMMENT '0-self, 1-other',
+  `other_rider_data` json DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -721,7 +727,9 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (64, 1),
 (65, 1),
 (66, 1),
-(67, 1);
+(67, 1),
+(68, 1),
+(69, 1);
 
 -- --------------------------------------------------------
 
@@ -827,6 +835,7 @@ CREATE TABLE `users` (
   `display_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `login_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `timezone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'UTC',
+  `last_location_update_at` datetime DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

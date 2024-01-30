@@ -40,6 +40,7 @@ class CommonNotification extends Notification
     {
         $notifications = []; 
 
+        if( $notifiable->player_id != null ) {
         if( $notifiable->user_type == 'driver' && env('ONESIGNAL_DRIVER_APP_ID') && env('ONESIGNAL_DRIVER_REST_API_KEY')) 
         {
                 $heading = [
@@ -68,7 +69,7 @@ class CommonNotification extends Notification
         } else {
             array_push($notifications, OneSignalChannel::class);
         }
-
+        }
         // Log::info('notifiable-'.$notifiable);
         if( env('FIREBASE_SERVER_KEY') && $notifiable->user_type == 'rider') {
             array_push($notifications, 'fcm');

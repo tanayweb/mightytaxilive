@@ -467,7 +467,8 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `parent_id`, `created_at`
 (66, 'rider show', 'web', 22, '2022-12-23 06:05:42', NULL),
 (67, 'complaint show', 'web', 57, '2022-12-23 06:05:42', NULL),
 (68, 'driverearning list', 'web', 17, '2023-01-17 06:05:42', NULL),
-(69, 'driver location', 'web', NULL, '2023-01-17 06:05:42', NULL);
+(69, 'driver location', 'web', 17, '2023-01-17 06:05:42', NULL),
+(70, 'dispatch add', 'web', 27, '2023-09-14 02:05:42', NULL);
 
 
 -- --------------------------------------------------------
@@ -729,7 +730,8 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (66, 1),
 (67, 1),
 (68, 1),
-(69, 1);
+(69, 1),
+(70, 1);
 
 -- --------------------------------------------------------
 

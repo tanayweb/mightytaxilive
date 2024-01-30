@@ -76,4 +76,36 @@ trait RideRequestTrait {
         $ride_request->fill($data)->update();
         return $ride_request;
     }
+
+    public function notifyDriverForRide($ride_request)
+    {
+        $nearby_driver = $ride_request->riderequest_in_driver ?? null;
+        if( $nearby_driver != null )
+        {
+            $data['riderequest_in_driver_id'] = $nearby_driver->id;
+            $notification_data = [
+                'id' => $ride_request->id,
+                'type' => 'new_ride_requested',
+                'data' => [
+                    'rider_id' => $ride_request->rider_id,
+                    'rider_name' => optional($ride_request->rider)->display_name ?? '',
+                ],
+                'message' => __('message.new_ride_requested'),
+                'subject' => __('message.ride.new_ride_requested'),
+            ];
+            $notify_data = new \stdClass();
+            $notify_data->success = true;
+            $notify_data->success_type = $ride_request->status;
+            $notify_data->success_message = __('message.ride.new_ride_requested');
+            $notify_data->result = new RideRequestResource($ride_request);
+            
+            $nearby_driver->notify(new CommonNotification($notification_data['type'], $notification_data));
+            dispatch(new NotifyViaMqtt('new_ride_request_'.$nearby_driver->id, json_encode($notify_data), $nearby_driver->id));
+        } else {
+            $data['riderequest_in_driver_id'] = null;
+            $data['riderequest_in_datetime'] = null;
+        }
+        $ride_request->fill($data)->update();
+        return $ride_request;
+    }
 }

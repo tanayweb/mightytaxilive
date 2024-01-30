@@ -29,7 +29,8 @@ class RideRequestController extends Controller
         $pageTitle = __('message.list_form_title',['form' => __('message.riderequest')] );
         $auth_user = authSession();
         $assets = ['datatable'];
-        $button = '';
+        $button = $auth_user->can('dispatch add') ? '<a href="'.route('dispatch.create').'" class="float-right btn btn-sm btn-primary"><i class="fa fa-plus-circle"></i> '. __('message.new_booking'). '</a>' : '';
+
         return $dataTable->render('global.datatable', compact('pageTitle','button','auth_user'));
     }
 
@@ -125,6 +126,10 @@ class RideRequestController extends Controller
             return json_message_response($message);
         }
 
+        if( $riderequest->status == 'accepted' ) {
+            $message = __('message.not_found_entry', ['name' => __('message.riderequest')]);
+            return json_message_response($message,400);
+        }
         if( request()->has('is_accept') && request('is_accept') == 1 ) {
             $riderequest->driver_id = request('driver_id');
             $riderequest->status = 'accepted';

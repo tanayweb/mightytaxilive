@@ -79,6 +79,10 @@
                         if(e.event == 'refresh'){
                             window.location.reload();
                         }
+                        if(e.event == 'reset'){
+                            form[0].reset()
+                            window.location.reload();
+                        }
                         if(e.event == "callback"){
                             showMessage(e.message);
                             $(".modal").modal('hide');

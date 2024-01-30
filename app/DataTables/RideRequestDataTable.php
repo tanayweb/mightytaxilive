@@ -29,8 +29,18 @@ class RideRequestDataTable extends DataTable
                 return $riderequest->driver_id != null ? optional($riderequest->driver)->display_name : '';
             })
 
+            ->editColumn('riderequest_in_driver_id' , function ( $riderequest ) {
+                return $riderequest->riderequest_in_driver_id != null ? optional($riderequest->riderequest_in_driver)->display_name : '';
+            })
+
             ->filterColumn('driver_id', function( $query, $keyword ){
                 $query->whereHas('driver', function ($q) use($keyword){
+                    $q->where('display_name', 'like' , '%'.$keyword.'%');
+                });
+            })
+
+            ->filterColumn('riderequest_in_driver_id', function( $query, $keyword ){
+                $query->whereHas('riderequest_in_driver', function ($q) use($keyword){
                     $q->where('display_name', 'like' , '%'.$keyword.'%');
                 });
             })
@@ -140,6 +150,7 @@ class RideRequestDataTable extends DataTable
             //     ->width(60),
             Column::make('id')->title( '#' ),
             Column::make('rider_id')->title( __('message.rider') ),
+            Column::make('riderequest_in_driver_id')->title( __('message.requested_driver') ),
             Column::make('driver_id')->title( __('message.driver') ),
             Column::make('datetime')->title( __('message.datetime') ),
             // Column::make('total_amount')->title( __('message.total_amount') ),

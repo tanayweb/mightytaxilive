@@ -31,7 +31,7 @@ class NotifyViaMqtt
     {
         try {
             // Log::info('mqtt-'.$this->message);
-            MQTT::publish($this->event, $this->message);
+            MQTT::publish(config('app.mqtt_unique_topic_name').'_'.$this->event, $this->message);
         } catch (\Exception $e) {
             Log::error($e);
         }

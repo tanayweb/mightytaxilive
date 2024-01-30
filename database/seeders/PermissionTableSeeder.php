@@ -637,11 +637,19 @@ class PermissionTableSeeder extends Seeder
                 'id' => 69,
                 'name' => 'driver location',
                 'guard_name' => 'web',
-                'parent_id' => NULL,
+                'parent_id' => 17,
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => NULL,
             ),          
-            
+            69 => 
+            array (
+                'id' => 70,
+                'name' => 'dispatch add',
+                'guard_name' => 'web',
+                'parent_id' => 27,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => NULL,
+            ),
         ));
     }
 }

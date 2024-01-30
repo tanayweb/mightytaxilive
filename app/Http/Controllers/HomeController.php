@@ -20,6 +20,7 @@ use App\Http\Resources\DriverResource;
 use App\Http\Resources\NearByDriverResource;
 use App\Models\Wallet;
 use App\Models\WalletHistory;
+use Grimzy\LaravelMysqlSpatial\Types\Point;
 
 class HomeController extends Controller
 {
@@ -414,6 +415,48 @@ class HomeController extends Controller
                         }
                     }
                     # code...
+                break;
+
+                case 'service_for_ride':
+                    $items = Service::select('id','name as text')->where('status',1);
+    
+                    if( $request->has('latitude') && isset($request->latitude) && $request->has('longitude') && isset($request->longitude) )
+                    {
+                        $point = new Point($request->latitude, $request->longitude);
+                        
+                        $items->whereHas('region',function ($q) use($point) {
+                            $q->where('status', 1)->contains('coordinates', $point);
+                        });
+                    }
+                            
+                    $items = $items->get();
+                break;
+                case 'driver_for_ride':
+                    $latitude = $request->latitude;
+                    $longitude = $request->longitude;
+    
+                    $service = Service::find($request->service_id);
+                    
+                    $distance_unit = optional($service->region)->distance_unit ?? 'km';
+                    $unit_value = convertUnitvalue($distance_unit);
+    
+                    $radius = SettingData('DISTANCE', 'DISTANCE_RADIUS') ?? 50;
+                    $minumum_amount_get_ride = SettingData('wallet', 'min_amount_to_get_ride') ?? null;
+    
+                    $items = User::selectRaw("id, display_name as text, status, is_online, is_available, last_location_update_at, user_type, latitude, longitude, ( $unit_value * acos( cos( radians($latitude) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians($longitude) ) + sin( radians($latitude) ) * sin( radians( latitude ) ) ) ) AS distance")->where('user_type', 'driver')->where('status','active')
+                        ->whereNotNull('latitude')->whereNotNull('longitude')
+                        ->having('distance', '<=', $radius)
+                        ->where('service_id', $request->service_id )
+                        ->where('is_online',1)
+                        ->where('is_available',1)
+                        ->orderBy('distance','asc');
+                        if( $minumum_amount_get_ride != null ) {
+                            $items = $items->whereHas('userWallet', function($q) use($minumum_amount_get_ride) {
+                                $q->where('total_amount', '>=', $minumum_amount_get_ride);
+                            });
+                        }
+                                
+                    $items = $items->get();
                 break;
             default :
                 break;

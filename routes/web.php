@@ -23,6 +23,10 @@ use App\Http\Controllers\WithdrawRequestController;
 
 use App\Http\Controllers\ComplaintCommentController;
 use App\Http\Controllers\WalletController;
+
+
+use App\Http\Controllers\DispatchController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -124,6 +128,11 @@ Route::group(['middleware' => ['auth', 'verified', 'admin']], function()
     Route::get('driver-earning-list', [ DriverController::class, 'driverEarning' ])->name('driver.earning.list');
 
     Route::post('save-wallet-fund/{user_id}', [ HomeController::class, 'saveWalletHistory'] )->name('savewallet.fund');
+
+
+
+    Route::resource('dispatch', DispatchController::class)->except(['index', 'edit']);
+
 });
 
 Route::get('/ajax-list',[ HomeController::class, 'getAjaxList' ])->name('ajax-list');
